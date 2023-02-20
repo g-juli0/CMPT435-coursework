@@ -39,18 +39,18 @@ void loadItems()
 class Node
 {
 public:
-    string value;
+    char value;
     Node* pointer;
 
     // default constructor
     Node()
     {
-        value = "";
+        value = '\0';
         pointer = NULL;
     }
 
     // overloaded constructor
-    Node(string v)
+    Node(char v)
     {
         value = v;
         pointer = NULL;
@@ -74,15 +74,43 @@ public:
     // add front
     void addFront(Node* n)
     {
-        n->pointer = head;
-        head = n;
+        // front is empty - first value
+        if (head == NULL)
+        {
+            head = n;
+            tail = n;
+        }
+        else
+        {
+            n->pointer = head;
+            head = n;
+        }
     }
 
     // add end
     void addEnd(Node* n)
     {
-        tail->pointer = n;
-        n->pointer = NULL;
+        // if no tail - either both head and tail are empty or just tail is null
+        if (tail == NULL)
+        {
+            if (head == NULL)
+            {
+                addFront(n);
+            }
+            // just tail is null
+            else
+            {
+                head->pointer = n;
+                tail = n;
+                n->pointer = NULL;
+            }
+        }
+        else
+        {
+            tail->pointer = n;
+            n->pointer = NULL;
+            tail = n;
+        }
     }
 
     // remove
@@ -191,26 +219,109 @@ public:
 };
 
 // stack - first in, last out
-class Stack
+class Stack: public SinglyLinkedList
 {
-    // push
-    // pop
+public:
+    Node* top;
+
+    Stack()
+    {
+        top = NULL;
+    }
+
+    Stack(Node* n)
+    {
+        top = n;
+    }
+
+    // push - adds node to top of stack
+    void push(Node* n)
+    {
+        addFront(n);
+    }
+
+    // pop - removes node from top of stack
+    Node* pop()
+    {
+        return top;
+        removeFront();
+    }
 };
 
 // queue - first in, first out
-class Queue
+class Queue: public SinglyLinkedList
 {
-    // enqueue
-    // dequeue
+public:
+    Node* first;
+
+    Queue()
+    {
+        first = NULL;
+    }
+
+    Queue(Node* n)
+    {
+        first = n;
+    }
+
+    // enqueue - adds node to end of queue
+    void enqueue(Node* n)
+    {
+        addEnd(n);
+    }
+
+    // dequeue - removes node from front of queue
+    Node* dequeue()
+    {
+        return first;
+        removeFront();
+    }
 };
 
 // MAIN FUNCTION ------------------------------------------------------------------------------
 int main()
 {
     loadItems();
-    
-    // ignore spaces, caps, punctuation
 
-    cout << items[0] << endl;
+    // for each string item in the list of magic items
+    for (string item : items)
+    {
+        // initialize a Stack and Queue
+        Stack s;
+        Queue q;
+
+        // for each character in the item name string
+        for (char c : item)
+        {
+            // ignore spaces and punctuation
+            if (isalpha(c))
+            {
+                // convert to lowercase to ignore capitalization
+                char ch = tolower(c);
+
+                // initialize character as a Node
+                Node* chNode = new Node(ch);
+                s.push(chNode);
+                q.enqueue(chNode);
+            }
+        }
+
+
+        bool palindrome = true;
+
+        
+        for (char c : item)
+        {
+            if (s.pop()->value != q.dequeue()->value)
+                palindrome = false;
+        }
+
+        if (palindrome == true)
+        {
+            cout << item << endl;
+        }
+        
+    }
+
     return 0;
 }
