@@ -1,19 +1,44 @@
 // Gianna Julio
 
 #include <iostream>
+#include <fstream>
+#include <string>
 using namespace std;
 
-int main()
+// load magic items into array from file
+void loadItems()
 {
-    cout << "Hello World!" << endl;
-    return 0;
+    // initialize array
+    string items[666];
+
+    // initialize file
+    fstream itemFile;
+    itemFile.open("magicitems.txt", ios_base::in);
+
+    if (itemFile.is_open())
+    {
+        // counter
+        int i = 0;
+
+        // while file still has items to read
+        while (itemFile.good())
+        {
+            string item; // initialize item string
+            getline(itemFile, item); // get line
+            items[i] = item; // store item string
+            i++; // increment counter
+        }
+        itemFile.close();
+    }
+
+    // confirm that all items have been successfully stored in the array
+    cout << items[665] << endl;
 }
 
 // node class
 class Node
 {
 public:
-
     int value;
     Node* pointer;
 
@@ -40,6 +65,7 @@ public:
     Node* tail;
     int length;
 
+    // default constructor
     SinglyLinkedList()
     {
         head = NULL;
@@ -93,3 +119,11 @@ class Queue
     // enqueue
     // dequeue
 };
+
+// MAIN FUNCTION ------------------------------------------------------------------------------
+int main()
+{
+    loadItems();
+    cout << "Hello World!" << endl;
+    return 0;
+}
