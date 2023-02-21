@@ -30,9 +30,6 @@ void loadItems()
         }
         itemFile.close();
     }
-
-    // confirm that all items have been successfully stored in the array
-    // cout << items[665] << endl;
 }
 
 // node class
@@ -41,20 +38,6 @@ class Node
 public:
     char value;
     Node* pointer;
-
-    // default constructor
-    Node()
-    {
-        value = '\0';
-        pointer = NULL;
-    }
-
-    // overloaded constructor
-    Node(char v)
-    {
-        value = v;
-        pointer = NULL;
-    }
 };
 
 // singly linked list
@@ -67,111 +50,93 @@ public:
     // default constructor
     SinglyLinkedList()
     {
-        head = NULL;
-        tail = NULL;
+        head = nullptr;
+        tail = nullptr;
     }
 
     // add front
-    void addFront(Node* n)
+    void addFront(char n)
     {
+        // initialize character as a Node
+        Node* chNode = new Node();
+        chNode->value = n;
+        //cout << n->value << endl;
+
         // front is empty - first value
-        if (head == NULL)
+        if (head == nullptr)
         {
-            head = n;
-            tail = n;
+            head = chNode;
+            tail = chNode;
         }
+        // otherwise, new node points to old node and replaces head
         else
         {
-            n->pointer = head;
-            head = n;
+            chNode->pointer = head;
+            head = chNode;
         }
     }
 
     // add end
-    void addEnd(Node* n)
+    void addEnd(char n)
     {
+        // initialize character as a Node
+        Node* chNode = new Node();
+        chNode->value = n;
         // if no tail - either both head and tail are empty or just tail is null
-        if (tail == NULL)
+        if (tail == nullptr)
         {
-            if (head == NULL)
+            // if the list is empty, add as a head
+            if (head == nullptr)
             {
                 addFront(n);
             }
             // just tail is null
             else
             {
-                head->pointer = n;
-                tail = n;
-                n->pointer = NULL;
+                head->pointer = chNode;
+                tail = chNode;
+                chNode->pointer = nullptr;
             }
         }
+        // otherwise, tail pointer now points to new node and new node replaces tail
         else
         {
-            tail->pointer = n;
-            n->pointer = NULL;
-            tail = n;
+            tail->pointer = chNode;
+            chNode->pointer = nullptr;
+            tail = chNode;
         }
-    }
-
-    // remove
-    void remove(int pos)
-    {
-        if (head == NULL)
-        {
-            cout << "Empty list" << endl;
-            return;
-        }
-
-        // Check if the position is greater than length
-        if (length() < pos)
-        {
-            cout << "Index out of range" << endl;
-            return;
-        }
-
-        // Declare temp1
-        Node* temp1 = head, * temp2 = NULL;
-
-        // Traverse the list to find the node to be deleted.
-        while (pos-- > 1)
-        {
-            // Update temp2
-            temp2 = temp1;
-
-            // Update temp1
-            temp1 = temp1->pointer;
-        }
-
-        // Change the pointer of previous node
-        temp2->pointer = temp1->pointer;
-
-        // Delete the node
-        delete temp1;
     }
 
     // remove front
-    void removeFront()
+    Node* removeFront()
     {
         Node* temp = head;
         // Update head
         head = head->pointer;
+        // reallocate memory
         delete temp;
-        return;
+        return head;
     }
 
     // remove end
-    void removeEnd()
+    Node* removeEnd()
     {
-        Node* temp = head, * prev = NULL;
-        while (temp->pointer != NULL)
+        // initialize temp and previous nodes
+        Node* temp = head, * prev = nullptr;
+        // while temp is not the tail
+        while (temp->pointer != nullptr)
         {
+            // save prev value
             prev = temp;
+            // iterate through nodes
             temp = temp->pointer;
         }
+        // reallocate memory
         delete temp;
-        prev->pointer = NULL;
+        // set prev pointer to null and replace tail with prev
+        prev->pointer = nullptr;
         tail = prev;
-        return;
+        return tail;
     }
 
     // print
@@ -180,17 +145,20 @@ public:
         Node* temp = head;
 
         // if list is empty
-        if (head == NULL)
+        if (head == nullptr)
         {
             cout << "Empty list" << endl;
             return;
         }
 
-        while (temp != NULL)
+        // iterate through nodes and print on same line, separated by spaces
+        while (temp != nullptr)
         {
-            cout << temp->value << endl;
+            cout << temp->value << " ";
             temp = temp->pointer;
         }
+        // new line
+        cout << endl;
 
     }
 
@@ -201,14 +169,8 @@ public:
         Node* temp = head;
         int len = 0;
 
-        // if list is empty
-        if (head == NULL)
-        {
-            return 0;
-        }
-
         // traverse and increment
-        while (temp != NULL)
+        while (temp != nullptr)
         {
             len++;
             temp = temp->pointer;
@@ -222,20 +184,8 @@ public:
 class Stack: public SinglyLinkedList
 {
 public:
-    Node* top;
-
-    Stack()
-    {
-        top = NULL;
-    }
-
-    Stack(Node* n)
-    {
-        top = n;
-    }
-
     // push - adds node to top of stack
-    void push(Node* n)
+    void push(char n)
     {
         addFront(n);
     }
@@ -243,8 +193,7 @@ public:
     // pop - removes node from top of stack
     Node* pop()
     {
-        return top;
-        removeFront();
+        return removeFront();
     }
 };
 
@@ -252,20 +201,8 @@ public:
 class Queue: public SinglyLinkedList
 {
 public:
-    Node* first;
-
-    Queue()
-    {
-        first = NULL;
-    }
-
-    Queue(Node* n)
-    {
-        first = n;
-    }
-
     // enqueue - adds node to end of queue
-    void enqueue(Node* n)
+    void enqueue(char n)
     {
         addEnd(n);
     }
@@ -273,8 +210,7 @@ public:
     // dequeue - removes node from front of queue
     Node* dequeue()
     {
-        return first;
-        removeFront();
+        return removeFront();
     }
 };
 
@@ -299,29 +235,32 @@ int main()
                 // convert to lowercase to ignore capitalization
                 char ch = tolower(c);
 
-                // initialize character as a Node
-                Node* chNode = new Node(ch);
-                s.push(chNode);
-                q.enqueue(chNode);
+                s.push(ch);
+                q.enqueue(ch);
             }
         }
 
-
+        // assume each item is a palindrome
         bool palindrome = true;
 
-        
-        for (char c : item)
+        // while stack (and queue - same length) is not empty
+        while (s.length() > 1)
         {
-            if (s.pop()->value != q.dequeue()->value)
+            // grab each head value
+            char stackChar = s.pop()->value;
+            char queueChar = q.dequeue()->value;
+
+            // compare - if there are any that dont match the word is not a palindrome
+            if (stackChar != queueChar)
                 palindrome = false;
         }
 
+        // if the bool is still true after the loop, all letters matched
         if (palindrome == true)
         {
+            // print out the palindrome item
             cout << item << endl;
         }
-        
     }
-
     return 0;
 }
