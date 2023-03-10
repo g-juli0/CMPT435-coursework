@@ -95,12 +95,28 @@ int selectionSort(string arr[], int n)
             swap(&arr[minIndex], &arr[i]);
         }
     }
-
-
     return comparisons;
 }
 
 // insertion sort
+int insertionSort(string arr[], int n)
+{
+    int comparisions = 0;
+    
+    for (int i = 1; i < n; i++)
+    {
+        int j = i;
+
+        while (j >= 0 && arr[j-1] > arr[j])
+        {
+            swap(arr[j], arr[j - 1]);
+            j--;
+            comparisions++;
+        }
+    }
+    return comparisions;
+}
+
 // merge sort
 // quick sort
 
@@ -129,12 +145,17 @@ int main()
 {
     loadItems();
 
-    // SELECTION SORT -----------------------------------------------------
+    // SELECTION SORT -----------------------------------------------------------------
     shuffleList(); // shuffle
     clock_t begin = clock(); // begin timer
     int selectionComparisons = selectionSort(items, 666); // call sort
     clock_t end = clock(); // end timer
-    display("Selection Sort", selectionComparisons, end-begin); // display
+    display("Selection Sort", selectionComparisons, end-begin); // display results
 
-    // INSERTION SORT -----------------------------------------------------
+    // INSERTION SORT -----------------------------------------------------------------
+    shuffleList(); // shuffle again
+    begin = clock(); // restart timer
+    int insertionComparisons = insertionSort(items, 666); // call sort
+    end = clock(); // end timer
+    display("Insertion Sort", insertionComparisons, end - begin); // display results
 }
