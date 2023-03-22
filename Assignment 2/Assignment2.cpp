@@ -268,7 +268,7 @@ int quickSort(string arr[], int start, int end)
     if (start >= end)
         return comparisons;
 
-    // partition the array
+    // partition the array - pass in address of comparisons
     int p = partition(arr, start, end, &comparisons);
 
     // Sorting the left part
