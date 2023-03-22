@@ -53,6 +53,7 @@ void shuffleList()
     // initialize random seed
     srand(time(NULL));
 
+    // for each item in list
     for (int i = size(items)-1; i > 0; i--)
     {
         // choose random item
@@ -147,28 +148,31 @@ int merge(string arr[], int left, int mid, int right)
     int indexOfArrayTwo = 0; // initial index of second sub-array
     int indexOfMergedArray = left; // initial index of merged array
 
-    // merge  temp arrays back into array[left>right]
+    // merge temp arrays back into array
     while (indexOfArrayOne < arrayOne && indexOfArrayTwo < arrayTwo) {
+        // if value in left array is smaller, left value goes into merged array next
         if (leftArray[indexOfArrayOne] <= rightArray[indexOfArrayTwo]) {
             arr[indexOfMergedArray] = leftArray[indexOfArrayOne];
             indexOfArrayOne++;
         }
+        // if right is smaller, right vale goes into merged array next
         else {
             arr[indexOfMergedArray] = rightArray[indexOfArrayTwo];
             indexOfArrayTwo++;
         }
+        // increment comparison counter and index of merged array
         comparisons++;
         indexOfMergedArray++;
     }
 
-    // Copy the remaining elements of left[], if there are any
+    // copy remaining elements of left[], if any
     while (indexOfArrayOne < arrayOne) {
         arr[indexOfMergedArray] = leftArray[indexOfArrayOne];
         indexOfArrayOne++;
         indexOfMergedArray++;
     }
 
-    // Copy the remaining elements of right[], if there are any
+    // copy remaining elements of right[], if any
     while (indexOfArrayTwo < arrayTwo) {
         arr[indexOfMergedArray] = rightArray[indexOfArrayTwo];
         indexOfArrayTwo++;
@@ -206,16 +210,77 @@ int mergeSort(string arr[], int start, int end)
     return comparisons;
 }
 
+// quick sort - pivot point always at start
+int partition(string arr[], int start, int end, int* comparisons)
+{
+    // store value at pivot point for comparisons
+    string pivot = arr[start];
+
+    // find smallest element
+    int count = 0;
+    for (int i = start + 1; i <= end; i++) {
+        if (arr[i] <= pivot)
+            count++;
+    }
+
+    // put pivot value in the correct position by swapping smallest and pivot
+    int pivotIndex = start + count;
+    swap(arr[pivotIndex], arr[start]);
+
+    // sort left and right parts of the pivot element
+    int i = start, j = end;
+
+    while (i < pivotIndex && j > pivotIndex)
+    {
+        (*comparisons)++;
+
+        // if previous values are less (on the correct side of the pivot), keep them in place and keep iterating
+        while (arr[i] <= pivot)
+        {
+            i++;
+            (*comparisons)++;
+        }
+
+        // if next values are greater (on the correct side of the pivot), keep them in place and keep iterating
+        while (arr[j] > pivot)
+        {
+            j--;
+            (*comparisons)++;
+        }
+
+        // if incorrect, swap
+        if (i < pivotIndex && j > pivotIndex)
+        {
+            swap(arr[i++], arr[j--]);
+            (*comparisons)++;
+        }
+    }
+
+    return pivotIndex;
+}
+
 // quick sort
-int quickSort(string arr[], int n)
+int quickSort(string arr[], int start, int end)
 {
     int comparisons = 0;
 
+    // base case
+    if (start >= end)
+        return comparisons;
 
+    // partition the array
+    int p = partition(arr, start, end, &comparisons);
+
+    // Sorting the left part
+    quickSort(arr, start, p - 1);
+
+    // Sorting the right part
+    quickSort(arr, p + 1, end);
 
     return comparisons;
 }
 
+// display formatted summary of sorts
 void display(string sortType, int comparisons, double time)
 {
     // display heading - left justified, width of 34, filler char of '-', title, end line
@@ -226,15 +291,6 @@ void display(string sortType, int comparisons, double time)
     printf("%-25s %5.f ms\n", "Elapsed time:", time);
     // extra spacing
     cout << endl;
-}
-
-// DELETE - for debugging
-void simpleDisplay()
-{
-    for (string item : items)
-    {
-        cout << item << endl;
-    }
 }
 
 int main()
@@ -255,7 +311,6 @@ int main()
     end = clock(); // end timer
     display("Insertion Sort", insertionComparisons, end-begin); // display results
 
-    
     // MERGE SORT ---------------------------------------------------------------------
     shuffleList(); // shuffle again
     begin = clock(); // restart timer
@@ -266,8 +321,7 @@ int main()
     // QUICK SORT ---------------------------------------------------------------------
     shuffleList(); // shuffle again
     begin = clock(); // restart timer
-    int quickComparisions = quickSort(items, 666); // call sort
+    int quickComparisions = quickSort(items, 0, 666); // call sort
     end = clock(); // end timer
-    display("Quick Sort", quickComparisions, end-begin); // display results
-    
+    display("Quick Sort", quickComparisions, end-begin); // display results    
 }
