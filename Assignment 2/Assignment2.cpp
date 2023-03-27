@@ -200,8 +200,8 @@ int mergeSort(string arr[], int start, int end)
     int mid = start + (end - start) / 2;
 
     // recursively sort both sides
-    mergeSort(arr, start, mid);
-    mergeSort(arr, mid + 1, end);
+    comparisons += mergeSort(arr, start, mid);
+    comparisons += mergeSort(arr, mid + 1, end);
     
     // merge all subarrays back together after breaking out of recusion
     // and add comparisions to running total
@@ -218,9 +218,13 @@ int partition(string arr[], int start, int end, int* comparisons)
 
     // find smallest element
     int count = 0;
-    for (int i = start + 1; i <= end; i++) {
+    for (int i = start + 1; i <= end; i++)
+    {
         if (arr[i] <= pivot)
+        {
             count++;
+            (*comparisons)++;
+        }
     }
 
     // put pivot value in the correct position by swapping smallest and pivot
