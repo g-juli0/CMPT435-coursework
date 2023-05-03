@@ -123,18 +123,40 @@ int mergeSort(string arr[], int start, int end)
 }
 
 // linear search
-int linearSearch(string target)
-{
+int linearSearch(string arr[], int size, string target) {
     int comparisons = 0;
 
+    for (int i = 0; i < size; i++) {
+        // increment comparions - checking each item in list
+        comparisons++;
+        if (arr[i] == target) {
+            // if target is found, break out of function
+            return comparisons;
+        }
+    }
+    // if not found, return total compares
     return comparisons;
 }
 
 // binary search
-int binarySearch(string target)
-{
+int binarySearch(string arr[], int size, string target) {
     int comparisons = 0;
+    int low = 0;
+    int high = size - 1;
 
+    while (low <= high) {
+        comparisons++;
+        int mid = (low + high) / 2;
+        if (arr[mid] == target) {
+            return comparisons;
+        }
+        else if (arr[mid] < target) {
+            low = mid + 1;
+        }
+        else {
+            high = mid - 1;
+        }
+    }
     return comparisons;
 }
 
@@ -168,7 +190,11 @@ int main()
         // choose random item
         string randItem = items[rand() % 666];
         
-        
+        int linearComparisons = linearSearch(items, 666, randItem);
+        //std::cout << linearComparisons << "\n";
+
+        int binaryComparisons = binarySearch(items, 666, randItem);
+        std::cout << binaryComparisons << "\n";
 
     }
 
