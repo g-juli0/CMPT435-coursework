@@ -6,7 +6,57 @@
 #include <stdio.h>          // output formatting
 #include <string>           // strings
 #include <algorithm>        // transform entire strings to lowercase for sorting
+#include <list>             // hash table
 using namespace std;
+
+/*
+// node class
+class Node
+{
+public:
+    string value;
+    Node* pointer;
+};
+
+class HashTable {
+private:
+    // set size
+    static const int tableSize = 250;
+
+    // array of nodes
+    list<Node> table[tableSize];
+
+public:
+    // hash function for strings
+    int hash(string target) {
+        int hash = 0;
+        for (char c : target) {
+            hash += c;
+        }
+        return hash % tableSize;
+    }
+
+    // insert node into hash table
+    void insert(string key) {
+        int index = hash(key);
+        int comparisons = 0;
+        //if(table[index] != nullptr)
+        table[index].emplace_back(key);
+        cout << "Inserted new key-value pair at index " << index << " after " << comparisons << " comparisons." << endl;
+    }
+
+    // look up target in  hash table and return its name, -1 if not found
+    int lookup(string key) {
+        int index = hash(key);
+        int comparisons = 0;
+        for (auto& kvp : table[index]) {
+            comparisons++;
+        }
+        cout << "Key " << key << " not found at index " << index << " after " << comparisons << " comparisons." << endl;
+        return -1; // key not found
+    }
+};
+*/
 
 // initialize array as global variable
 string items[666];
@@ -160,17 +210,13 @@ int binarySearch(string arr[], int size, string target) {
     return comparisons;
 }
 
-// hash table with chaining
-
 // display formatted summary of sorts
-void display(string searchType, int comparisons, double time)
+void display(string searchType, double comparisons)
 {
     // display heading - left justified, width of 34, filler char of '-', title, end line
     cout << left << setw(34) << setfill('-') << searchType + " " << endl;
     // display label left aligned in 25 spaces, followed by value right aligned (default) with 8 spaces
-    printf("%-25s %8d\n", "Number of comparisions:", comparisons);
-    // display label left aligned in 25 spaces, followed by value right aligned (default) with 5 spaces (8-3=5 characters for ' ms')
-    printf("%-25s %5.f ms\n", "Elapsed time:", time);
+    printf("%-25s %8.3f\n", "Average comparisions:", comparisons);
     // extra spacing
     cout << endl;
 }
@@ -181,8 +227,22 @@ int main()
     loadItems();
     mergeSort(items, 0, 666);
 
+    /*
+    // create and fill hash table
+    HashTable h;
+    for (string i : items)
+    {
+        h.insert(i);
+    };
+    */
+
     // initialize random seed
     srand(time(NULL));
+
+    // initial totals - used to compute averages later
+    double totalComparesLinear = 0;
+    double totalComparesBinary = 0;
+    double totalComparesHashes = 0;
 
     // loops to pick a new random item, perform both searches, and compile results
     for (int i = 0; i < 42; i++)
@@ -190,13 +250,23 @@ int main()
         // choose random item
         string randItem = items[rand() % 666];
         
-        int linearComparisons = linearSearch(items, 666, randItem);
+        double linearComparisons = linearSearch(items, 666, randItem);
+        totalComparesLinear += linearComparisons;
         //std::cout << linearComparisons << "\n";
 
-        int binaryComparisons = binarySearch(items, 666, randItem);
-        std::cout << binaryComparisons << "\n";
+        double binaryComparisons = binarySearch(items, 666, randItem);
+        totalComparesBinary += binaryComparisons;
+        //std::cout << binaryComparisons << "\n";
 
     }
+
+    double avgComparesLinear = totalComparesLinear / 42.0;
+    double avgComparesBinary = totalComparesBinary / 42.0;
+    double avgComparesHashes = totalComparesHashes / 42.0;
+
+    display("Linear Search", avgComparesLinear);
+    display("Binary Search", avgComparesBinary);
+    display("Hash Table with chaining", avgComparesHashes);
 
     std::cout << "Hello World!\n";
 }
