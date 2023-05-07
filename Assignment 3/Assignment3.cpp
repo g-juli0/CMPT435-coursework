@@ -6,57 +6,110 @@
 #include <stdio.h>          // output formatting
 #include <string>           // strings
 #include <algorithm>        // transform entire strings to lowercase for sorting
-#include <list>             // hash table
+
 using namespace std;
 
-/*
 // node class
-class Node
+class HashNode
 {
 public:
-    string value;
-    Node* pointer;
+    string item;
+    HashNode* pointer;
+
+    // default constructor initializes item as empty string and pointer as null
+    HashNode()
+    {
+        item = "";
+        pointer = nullptr;
+    }
+
+    // constructor that takes a specific item string as input
+    HashNode(string i)
+    {
+        item = i;
+        pointer = nullptr;
+    }
 };
 
+// hash table class
 class HashTable {
 private:
     // set size
     static const int tableSize = 250;
 
-    // array of nodes
-    list<Node> table[tableSize];
+    // array of pointers to nodes
+    HashNode* table[tableSize];
 
 public:
+
+    HashTable()
+    {
+        HashNode* table[tableSize];
+
+        for (int i = 0; i < tableSize; i++)
+        {
+            table[i] = new HashNode();
+        }
+    }
+
     // hash function for strings
-    int hash(string target) {
+    int hash(string target)
+    {
         int hash = 0;
-        for (char c : target) {
+        for (char c : target)
+        {
             hash += c;
         }
         return hash % tableSize;
     }
 
     // insert node into hash table
-    void insert(string key) {
-        int index = hash(key);
-        int comparisons = 0;
-        //if(table[index] != nullptr)
-        table[index].emplace_back(key);
-        cout << "Inserted new key-value pair at index " << index << " after " << comparisons << " comparisons." << endl;
+    void insert(string item)
+    {
+        HashNode* newNode = new HashNode(item);
+        int index = hash(item);
+
+        if (table[index] == nullptr)
+        {
+            table[index] = newNode;
+        }
+        //table[index] = newNode;
+
+        /*
+        if (table[index] == nullptr)
+        {
+            table[index] = newNode;
+        }
+        else {
+            HashNode* temp = table[index];
+            while (temp->pointer != nullptr)
+            {
+                temp = temp->pointer;
+            }
+            temp->pointer = newNode;
+        }
+        */
     }
 
-    // look up target in  hash table and return its name, -1 if not found
-    int lookup(string key) {
-        int index = hash(key);
+    // look up target in hash table
+    int lookup(string target)
+    {
+        int index = hash(target);
         int comparisons = 0;
-        for (auto& kvp : table[index]) {
+
+        HashNode* temp = table[index];
+        while (temp != nullptr)
+        {
             comparisons++;
+            if (temp->item == target)
+            {
+                return comparisons;
+            }
+            temp = temp->pointer;
         }
-        cout << "Key " << key << " not found at index " << index << " after " << comparisons << " comparisons." << endl;
-        return -1; // key not found
+        return comparisons;
     }
 };
-*/
 
 // initialize array as global variable
 string items[666];
@@ -227,14 +280,12 @@ int main()
     loadItems();
     mergeSort(items, 0, 666);
 
-    /*
     // create and fill hash table
     HashTable h;
     for (string i : items)
     {
         h.insert(i);
-    };
-    */
+    }
 
     // initialize random seed
     srand(time(NULL));
@@ -244,7 +295,7 @@ int main()
     double totalComparesBinary = 0;
     double totalComparesHashes = 0;
 
-    // loops to pick a new random item, perform both searches, and compile results
+    // loops to pick a new random item, perform all searches, and compile results
     for (int i = 0; i < 42; i++)
     {
         // choose random item
@@ -258,15 +309,20 @@ int main()
         totalComparesBinary += binaryComparisons;
         //std::cout << binaryComparisons << "\n";
 
+        double hashComparisons = h.lookup(randItem);
+        totalComparesHashes += hashComparisons;
+        //std::cout << hashComparisons << "\n";
+
     }
 
+    // compute averages
     double avgComparesLinear = totalComparesLinear / 42.0;
     double avgComparesBinary = totalComparesBinary / 42.0;
     double avgComparesHashes = totalComparesHashes / 42.0;
 
+    // display summary
     display("Linear Search", avgComparesLinear);
     display("Binary Search", avgComparesBinary);
     display("Hash Table with chaining", avgComparesHashes);
 
-    std::cout << "Hello World!\n";
 }
