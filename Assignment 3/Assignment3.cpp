@@ -9,6 +9,9 @@
 
 using namespace std;
 
+// initialize array as global variable
+string items[666];
+
 // node class
 class HashNode
 {
@@ -38,20 +41,9 @@ private:
     static const int tableSize = 250;
 
     // array of pointers to nodes
-    HashNode* table[tableSize];
+    HashNode* table[tableSize] = {nullptr};
 
 public:
-
-    HashTable()
-    {
-        HashNode* table[tableSize];
-
-        for (int i = 0; i < tableSize; i++)
-        {
-            table[i] = new HashNode();
-        }
-    }
-
     // hash function for strings
     int hash(string target)
     {
@@ -66,53 +58,60 @@ public:
     // insert node into hash table
     void insert(string item)
     {
+        // create new node
         HashNode* newNode = new HashNode(item);
+        // compute hash
         int index = hash(item);
+        // store what is currently at that index in a temp
+        HashNode* temp = table[index];
 
-        if (table[index] == nullptr)
+        // if nothing is currently in this hash bucket, place new node here
+        if (temp == nullptr)
         {
             table[index] = newNode;
         }
-        //table[index] = newNode;
-
-        /*
-        if (table[index] == nullptr)
+        // if another node already has this hash (collision), make this new node the next pointer
+        else
         {
-            table[index] = newNode;
-        }
-        else {
-            HashNode* temp = table[index];
+            // while there is still a next value
             while (temp->pointer != nullptr)
             {
+                // store next value in temp
                 temp = temp->pointer;
             }
+            // temp is the last linked value, set its pointer to the new node
             temp->pointer = newNode;
         }
-        */
     }
 
     // look up target in hash table
     int lookup(string target)
     {
+        // compute hash and initialize number of comparisons
         int index = hash(target);
         int comparisons = 0;
 
+        // find first value with the computed hash and store it in temp
         HashNode* temp = table[index];
+
+        // if first hash node has valid pointers
         while (temp != nullptr)
         {
+            // increment comparisons
             comparisons++;
+
+            // iterate through the pointers
             if (temp->item == target)
             {
+                // return comparisons when target value is found
                 return comparisons;
             }
+            // if not the target, continue iterating
             temp = temp->pointer;
         }
         return comparisons;
     }
 };
-
-// initialize array as global variable
-string items[666];
 
 // loadItems from last file
 void loadItems()
@@ -290,7 +289,7 @@ int main()
     // initialize random seed
     srand(time(NULL));
 
-    // initial totals - used to compute averages later
+    // initialize totals - used to compute averages later
     double totalComparesLinear = 0;
     double totalComparesBinary = 0;
     double totalComparesHashes = 0;
@@ -301,17 +300,17 @@ int main()
         // choose random item
         string randItem = items[rand() % 666];
         
+        // linear
         double linearComparisons = linearSearch(items, 666, randItem);
-        totalComparesLinear += linearComparisons;
-        //std::cout << linearComparisons << "\n";
+        totalComparesLinear += linearComparisons; // add to running total
 
+        // binary
         double binaryComparisons = binarySearch(items, 666, randItem);
-        totalComparesBinary += binaryComparisons;
-        //std::cout << binaryComparisons << "\n";
+        totalComparesBinary += binaryComparisons; // add to running total
 
+        // hash table
         double hashComparisons = h.lookup(randItem);
-        totalComparesHashes += hashComparisons;
-        //std::cout << hashComparisons << "\n";
+        totalComparesHashes += hashComparisons; // add to running total
 
     }
 
@@ -324,5 +323,4 @@ int main()
     display("Linear Search", avgComparesLinear);
     display("Binary Search", avgComparesBinary);
     display("Hash Table with chaining", avgComparesHashes);
-
 }
