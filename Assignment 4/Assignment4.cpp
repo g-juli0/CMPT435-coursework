@@ -7,16 +7,17 @@
 
 using namespace std;
 
-// initialize matrix, adjacency list, and linked object class
-const int MAX_N = 75;
-
 // initialize array as global variable
 string items[666];
 
+// initialize matrix, adjacency list, and linked object class
+const int MAX_N = 75;
+
+// matrix class
 class Matrix
 {
 public:
-    int matrix[MAX_N][MAX_N];
+    int matrix[MAX_N][MAX_N] = {};
     int size; // actual size and number of vertices
 
     void addEdge(int v1, int v2)
@@ -27,7 +28,7 @@ public:
     void print()
     {
         // print heading
-        std::cout << "  | ";
+        std::cout << "  |";
         for (int i = 1; i <= size; i++)
         {
             std::cout << " " << i;
@@ -38,7 +39,7 @@ public:
         for (int i = 1; i <= size; i++)
         {
             std::cout << i << " |";
-            for (int j = 1; j <= n; j++)
+            for (int j = 1; j <= size; j++)
             {
                 std::cout << " " << matrix[i-1][j-1];
             }
@@ -47,10 +48,11 @@ public:
     }
 };
 
+// adjacency list class
 class AdjacencyList
 {
 public:
-    int adjacencyList[MAX_N][MAX_N];
+    int adjacencyList[MAX_N][MAX_N] = {};
     int size; // actual size and number of vertices
 
     void addEdge(int v1, int v2)
@@ -90,6 +92,7 @@ public:
     }
 };
 
+// node class for linked objects
 class Node
 {
 public:
@@ -127,13 +130,14 @@ void loadGraphs()
 
             else if (line.find("graph") != std::string::npos)
             {
-                m.print();
-                adj.print();
-                n = 0; // reset size
+                m.print();      // print old matrix
+                adj.print();    // print old adjacency list
+                n = 0;          // reset size
             }
 
             else if (line.find("vertex") != std::string::npos)
             {
+                // adjust sizing for each new vertex
                 n++;
                 m.size = n;
                 adj.size = n;
@@ -182,7 +186,7 @@ void loadItems()
 }
 
 //BST
-// Definition of the AVL tree node
+// definition of the AVL tree node
 struct AVLNode {
     string data;
     AVLNode* left;
@@ -190,7 +194,7 @@ struct AVLNode {
     int height;
 };
 
-// Function to get the height of a node
+// function to get the height of a node
 int height(AVLNode* node) {
     if (node == nullptr) {
         return 0;
@@ -198,12 +202,12 @@ int height(AVLNode* node) {
     return node->height;
 }
 
-// Function to get the maximum of two integers
+// function to get the maximum of two integers
 int max(int a, int b) {
     return (a > b) ? a : b;
 }
 
-// Function to create a new node with a given data
+// function to create a new node with a given data
 AVLNode* newNode(string data) {
     AVLNode* node = new AVLNode();
     node->data = data;
@@ -213,7 +217,7 @@ AVLNode* newNode(string data) {
     return node;
 }
 
-// Function to perform a right rotation on a node
+// function to perform a right rotation on a node
 AVLNode* rightRotate(AVLNode* y) {
     AVLNode* x = y->left;
     AVLNode* T2 = x->right;
@@ -230,7 +234,7 @@ AVLNode* rightRotate(AVLNode* y) {
     return x;
 }
 
-// Function to perform a left rotation on a node
+// function to perform a left rotation on a node
 AVLNode* leftRotate(AVLNode* x) {
     AVLNode* y = x->right;
     AVLNode* T2 = y->left;
@@ -247,7 +251,7 @@ AVLNode* leftRotate(AVLNode* x) {
     return y;
 }
 
-// Function to get the balance factor of a node
+// function to get the balance factor of a node
 int getBalance(AVLNode* node) {
     if (node == nullptr) {
         return 0;
@@ -255,7 +259,7 @@ int getBalance(AVLNode* node) {
     return height(node->left) - height(node->right);
 }
 
-// Function to insert a new node into the tree
+// function to insert a new node into the tree
 AVLNode* insertNode(AVLNode* node, string data) {
     // Perform the normal BST insertion
     if (node == nullptr) {
@@ -307,7 +311,7 @@ AVLNode* insertNode(AVLNode* node, string data) {
     return node;
 }
 
-// Function to print the tree in order
+// function to print the tree in order
 void inorderTraversal(AVLNode* node) {
     if (node != nullptr) {
         inorderTraversal(node->left);
