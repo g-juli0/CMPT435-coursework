@@ -125,7 +125,7 @@ void loadGraphs()
             if (line.find("--") != std::string::npos)
             {
                 // ignore this line
-                std::cout << "ignore\n";
+                //std::cout << "ignore\n";
             }
 
             else if (line.find("graph") != std::string::npos)
@@ -141,7 +141,7 @@ void loadGraphs()
                 n++;
                 m.size = n;
                 adj.size = n;
-                std::cout << "vertex" << n << "\n";
+                //std::cout << "vertex" << n << "\n";
             }
 
             else if (line.find("edge") != std::string::npos)
@@ -151,7 +151,7 @@ void loadGraphs()
                 int v2 = 0;
                 m.addEdge(v1, v2);
                 adj.addEdge(v1, v2);
-                std::cout << "edge\n";
+                //std::cout << "edge\n";
             }
 
             i++; // increment counter
