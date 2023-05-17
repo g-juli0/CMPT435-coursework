@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -49,7 +50,61 @@ public:
     }
 };
 
+// item for knapsack problem
+class Item
+{
+public:
+    string name;
+    double totalPrice;
+    int qty;
+
+    Item(string n, double p, int q)
+    {
+        name = n;
+        totalPrice = p;
+        qty = q;
+    }
+};
+
+// function to compute best case in fractional knapsack problem
+double fractionalKnapsack(int capacity, Item* items[]) {
+
+    double totalValue = 0.0;
+
+    for (int i = 0; i < 4; i++)
+    {
+        // if the whole item fits in the bag
+        if (capacity >= items[i]->qty) {
+            totalValue += items[i]->totalPrice;
+            capacity -= items[i]->qty;
+            // add it to the bag and decrease bag quantity
+        }
+        // take all that fits in the bag
+        else {
+            double fraction = (double)capacity / items[i]->qty;
+            totalValue += fraction * items[i]->totalPrice;
+            break;
+        }
+    }
+
+    return totalValue;
+}
+
+
 int main()
 {
-    std::cout << "Hello World!\n";
+
+    // fractional backpack problem
+    Item* red       = new Item("red", 4.0, 4);      // unit value: 1
+    Item* green     = new Item("green", 12.0, 6);   // unit value: 2
+    Item* blue      = new Item("blue", 40.0, 8);    // unit value: 5
+    Item* orange    = new Item("orange", 18.0, 2);  // unit value: 9
+
+    Item* items[] = {orange, blue, green, red};
+
+    cout << "Knapsack with capacity 1 has a value of " << fractionalKnapsack(1, items) << endl;
+    cout << "Knapsack with capacity 6 has a value of " << fractionalKnapsack(6, items) << endl;
+    cout << "Knapsack with capacity 10 has a value of " << fractionalKnapsack(10, items) << endl;
+    cout << "Knapsack with capacity 20 has a value of " << fractionalKnapsack(20, items) << endl;
+    cout << "Knapsack with capacity 21 has a value of " << fractionalKnapsack(21, items) << endl;
 }
