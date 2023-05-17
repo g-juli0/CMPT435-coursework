@@ -3,8 +3,62 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <fstream>
+#include <string>
 
 using namespace std;
+
+void loadGraphs()
+{
+    // initialize file
+    fstream itemFile;
+    itemFile.open("graphs1.txt", ios_base::in);
+
+    if (itemFile.is_open())
+    {
+        // counter
+        int i = 0;
+
+        // initialize objects
+        int n = 0; // size
+
+        // while file still has items to read
+        while (itemFile.good())
+        {
+            string line; // initialize item string
+            getline(itemFile, line); // get line
+
+            if (line.find("--") != std::string::npos)
+            {
+                // ignore this line
+                //std::cout << "ignore\n";
+            }
+
+            else if (line.find("graph") != std::string::npos)
+            {
+                n = 0;          // reset size
+            }
+
+            else if (line.find("vertex") != std::string::npos)
+            {
+                // adjust sizing for each new vertex
+                n++;
+                //std::cout << "vertex" << n << "\n";
+            }
+
+            else if (line.find("edge") != std::string::npos)
+            {
+                // find v1 and v2
+                int v1 = 0;
+                int v2 = 0;
+                //std::cout << "edge\n";
+            }
+
+            i++; // increment counter
+        }
+        itemFile.close();
+    }
+}
 
 // node for the directed graph
 class Node
